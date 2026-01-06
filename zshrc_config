@@ -1,0 +1,38 @@
+########## Aliases for common commands
+alias 'ls=ls -lGa'
+alias devtheme='~/Scripts/toggle-dev-theme.sh'
+alias login='ssh reggiebain@192.168.1.143'
+alias vim='nvim'
+
+##########  Macros for hard to remember stuff
+
+# Function to register the current active venv as a Jupyter kernel
+# Usage: jupyter_register "My Custom Name" "my-custom-name"
+jupyter_register() {
+  # $1 is the Display Name (e.g., "Personalization Engine")
+  # $2 is the Internal Name (e.g., "personalization-engine")
+
+  if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: jupyter_register \"Display Name\" \"internal-name\""
+    return 1
+  fi
+
+  echo "Registering kernel '$1' ($2)..."
+  python -m ipykernel install --user --name="$2" --display-name "$1"
+}
+
+# Add, commit with a prompt, and push to master
+gitquick() {
+  git add .
+  echo -n "Enter commit message: "
+  read message
+
+  # Check if message is empty to avoid git errors
+  if [ -z "$message" ]; then
+    echo "Commit cancelled: No message provided."
+    return 1
+  fi
+
+  git commit -m "$message"
+  git push origin master
+}
