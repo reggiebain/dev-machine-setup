@@ -7,25 +7,30 @@
 export function modifyConfig(config: Config): Config {
   return {
     models: [
-      // Primary coding model - larger context window
+      // DeepSeek for coding (primary on work laptop)
       {
-        title: "DeepSeek Coder (Local - HBP Safe)",
+        title: "DeepSeek Coder (Code)",
         provider: "ollama",
         model: "deepseek-coder:6.7b",
         apiBase: "http://localhost:11434",
-        contextLength: 16384,
       },
-      // Alternative coding model
+      // Llama for general questions
       {
-        title: "Qwen 2.5 Coder (Local)",
+        title: "Llama 3.2 3B (Chat)",
         provider: "ollama",
-        model: "qwen2.5-coder:7b",
+        model: "llama3.2:3b",
         apiBase: "http://localhost:11434",
-        contextLength: 8192,
+      },
+      // Your Llama 3.1 from personal laptop (if you want it)
+      {
+        title: "Llama 3.1 8B (Local)",
+        provider: "ollama",
+        model: "llama3.1:8b",
+        apiBase: "http://localhost:11434",
       },
     ],
     
-    // Model for tab autocomplete (appears as you type)
+    // Use DeepSeek for autocomplete (best for code)
     tabAutocompleteModel: {
       title: "DeepSeek Autocomplete",
       provider: "ollama",
@@ -33,18 +38,29 @@ export function modifyConfig(config: Config): Config {
       apiBase: "http://localhost:11434",
     },
     
-    // Context providers - what the model can access
+    // For semantic code search
+    embeddingsProvider: {
+      provider: "ollama",
+      model: "nomic-embed-text",
+      apiBase: "http://localhost:11434",
+    },
+    
+    // What context the model can access
     contextProviders: [
       {
         name: "code",
         params: {},
       },
       {
-        name: "docs",
+        name: "diff",
         params: {},
       },
       {
-        name: "diff",
+        name: "folder",
+        params: {},
+      },
+      {
+        name: "codebase",
         params: {},
       },
       {
@@ -56,16 +72,12 @@ export function modifyConfig(config: Config): Config {
         params: {},
       },
       {
-        name: "folder",
-        params: {},
-      },
-      {
-        name: "codebase",
+        name: "docs",
         params: {},
       },
     ],
     
-    // Slash commands for quick actions
+    // Helpful commands you can use with /
     slashCommands: [
       {
         name: "edit",
@@ -73,19 +85,60 @@ export function modifyConfig(config: Config): Config {
       },
       {
         name: "comment",
-        description: "Write comments for the selected code",
+        description: "Write comments for code",
       },
       {
         name: "share",
-        description: "Export this session to markdown",
+        description: "Export chat to markdown",
       },
       {
         name: "cmd",
         description: "Generate a shell command",
       },
+      {
+        name: "commit",
+        description: "Generate git commit message",
+      },
     ],
     
-    // Privacy settings
+    // Custom slash commands for HBP work
+    customCommands: [
+      {
+        name: "test",
+        prompt: "Write comprehensive unit tests for the selected code using pytest. Include edge cases and docstrings.",
+        description: "Generate unit tests",
+      },
+      {
+        name: "docstring",
+        prompt: "Add a Google-style docstring to this function/class with Args, Returns, and Examples sections.",
+        description: "Add docstring",
+      },
+      {
+        name: "optimize",
+        prompt: "Analyze this code for performance issues and suggest optimizations. Consider time complexity, space complexity, and Python best practices.",
+        description: "Optimize code",
+      },
+      {
+        name: "explain",
+        prompt: "Explain what this code does in detail, including algorithms, data structures, and design patterns used.",
+        description: "Explain code",
+      },
+      {
+        name: "snowflake",
+        prompt: "Convert this code to work with Snowflake using snowflake-ml-python or snowflake-connector-python.",
+        description: "Snowflake integration",
+      },
+    ],
+    
+    // Don't send telemetry
     allowAnonymousTelemetry: false,
+    
+    // Documentation sites for context
+    docs: [
+      "https://docs.snowflake.com/",
+      "https://scikit-learn.org/stable/",
+      "https://fastapi.tiangolo.com/",
+      "https://pandas.pydata.org/docs/",
+    ],
   };
 }
